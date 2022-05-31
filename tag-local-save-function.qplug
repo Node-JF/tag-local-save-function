@@ -2,7 +2,7 @@
 PluginInfo = {
   Name = "TAG~Local Save Function",
   Version = "1.0",
-  BuildVersion = "1.0.0.13",
+  BuildVersion = "1.0.0.16",
   Id = "463824d1-a6ad-49d8-97ca-63059d892c5d",
   Author = "Jason Foord (TAG)",
   Description = "Save and restore the .String property of controls on named components using a local JSON file in the PageArchives/Configuration Files directory"
@@ -39,7 +39,7 @@ Master_Object = {{
         ["Name"] = "Sync/Save",
         ["Depth"] = 3,
         ["Controls"] = {{
-            Name = "config.filename",
+            Name = "config_filename",
             PrettyName = "Configuration~Filename",
             Label = "Filename",
             ControlType = "Text",
@@ -48,7 +48,7 @@ Master_Object = {{
             Size = Sizes.Text,
             GridPos = 1
         }, {
-            Name = "config.sync",
+            Name = "config_sync",
             PrettyName = "Configuration~Sync",
             ControlType = "Button",
             ButtonType = "Trigger",
@@ -59,7 +59,7 @@ Master_Object = {{
             Position = (width - 15) - Sizes.Button[1] - Sizes.Text[1],
             GridPos = 2
         }, {
-            Name = "status.sync",
+            Name = "status_sync",
             PrettyName = "Configuration~Status~Sync",
             Label = "Sync",
             ControlType = "Indicator",
@@ -69,7 +69,7 @@ Master_Object = {{
             Size = Sizes.Text,
             GridPos = 2
         }, {
-            Name = "config.save",
+            Name = "config_save",
             PrettyName = "Configuration~Save",
             ControlType = "Button",
             ButtonType = "Trigger",
@@ -80,7 +80,7 @@ Master_Object = {{
             Position = (width - 15) - Sizes.Button[1] - Sizes.Text[1],
             GridPos = 3
         }, {
-            Name = "status.save",
+            Name = "status_save",
             PrettyName = "Configuration~Status~Save",
             Label = "Save",
             ControlType = "Indicator",
@@ -96,7 +96,7 @@ Master_Object = {{
         ["Name"] = "Components",
         ["Depth"] = 14,
         ["Controls"] = {{
-            Name = "components.filter",
+            Name = "components_filter",
             PrettyName = "Select Components~Filter",
             Label = "Filter",
             ControlType = "Text",
@@ -105,7 +105,7 @@ Master_Object = {{
             Size = Sizes.Text,
             GridPos = 1
         }, {
-            Name = "components.selectall",
+            Name = "components_selectall",
             PrettyName = "Select Components~Select All",
             Label = "Select All",
             ControlType = "Button",
@@ -115,7 +115,7 @@ Master_Object = {{
             Size = Sizes.Button,
             GridPos = 2
         }, {
-            Name = "components.deselectall",
+            Name = "components_deselectall",
             PrettyName = "Select Components~Deselect All",
             Label = "Deselect All",
             ControlType = "Button",
@@ -125,7 +125,7 @@ Master_Object = {{
             Size = Sizes.Button,
             GridPos = 3
         }, {
-            Name = "components.list",
+            Name = "components_list",
             PrettyName = "Select Components~List",
             Label = "Components",
             ControlType = "Text",
@@ -140,7 +140,7 @@ Master_Object = {{
         ["Name"] = "Controls",
         ["Depth"] = 13,
         ["Controls"] = {{
-            Name = "controls.selectall",
+            Name = "controls_selectall",
             PrettyName = "Select Controls~Select All",
             Label = "Select All",
             ControlType = "Button",
@@ -150,7 +150,7 @@ Master_Object = {{
             Size = Sizes.Button,
             GridPos = 1
         }, {
-            Name = "controls.deselectall",
+            Name = "controls_deselectall",
             PrettyName = "Select Controls~Deselect All",
             Label = "Deselect All",
             ControlType = "Button",
@@ -160,7 +160,7 @@ Master_Object = {{
             Size = Sizes.Button,
             GridPos = 2
         }, {
-            Name = "controls.list",
+            Name = "controls_list",
             PrettyName = "Select Controls~List",
             Label = "Controls",
             ControlType = "Text",
@@ -175,7 +175,7 @@ Master_Object = {{
         ["Name"] = "Errors",
         ["Depth"] = 11,
         ["Controls"] = {{
-            Name = "errors.list",
+            Name = "errors_list",
             PrettyName = "Error List",
             Label = "Errors",
             ControlType = "Text",
@@ -411,14 +411,14 @@ if Controls then
     
     function SetStatus(code, message, name)
     
-        Controls[string.format("status.%s", name)].Value = code
-        Controls[string.format("status.%s", name)].String = message
+        Controls[string.format("status_%s", name)].Value = code
+        Controls[string.format("status_%s", name)].String = message
     
     end; SetStatus(0, "", "sync"); SetStatus(0, "", "save")
     
     function GetFilename()
     
-        local name = Controls["config.filename"].String
+        local name = Controls["config_filename"].String
         if not name:match("%w+") then name = "default-config" end
         
         return string.format("%s/%s.json", directory, name)
@@ -432,7 +432,7 @@ if Controls then
         
         for i, component in ipairs(Components) do
            
-           if component.Name:find(Controls['components.filter'].String) then
+           if component.Name:find(Controls['components_filter'].String) then
             
             table.insert(ComponentList, {
                 Text = component.Name,
@@ -444,7 +444,7 @@ if Controls then
             
         end
         
-        Controls["components.list"].Choices = ComponentList
+        Controls["components_list"].Choices = ComponentList
         
         Sync()
     end
@@ -461,8 +461,8 @@ if Controls then
     end
     
     function ResetControlsList()
-        Controls["controls.list"].Choices = {}
-        Controls["controls.list"].String = ""
+        Controls["controls_list"].Choices = {}
+        Controls["controls_list"].String = ""
     end
     
     function Sync()
@@ -485,14 +485,14 @@ if Controls then
         UpdateList(data)
         
         -- update the list box
-        Controls["components.list"].Choices = ComponentList
+        Controls["components_list"].Choices = ComponentList
         
     end
     
     function UpdateList(data)
         
         -- reset the string, so there's no weird interactions with the list box
-        Controls["components.list"].String = ""
+        Controls["components_list"].String = ""
         
         -- reset the selections
         for i, choice in ipairs(ComponentList) do
@@ -503,7 +503,9 @@ if Controls then
         local Errors = {}
         
         local function PushValues(component, props)
-            Component.New(component)[props.Control].String = props.String
+            local component = Component.New(component)
+            print(props.Control)
+            component[props.Control].String = props.String
         end
         
         -- error check that the JSON data is valid
@@ -512,7 +514,7 @@ if Controls then
             SetStatus(2, "Invalid JSON Data", "sync")
             print("Invalid JSON")     
             table.insert(Errors, {Color = "Red", Text = "Invalid JSON - Check Formatting"})
-            Controls["errors.list"].Choices = Errors
+            Controls["errors_list"].Choices = Errors
             return
             
         end
@@ -539,7 +541,7 @@ if Controls then
                         else
                             msg = "does not exist"
                             SetStatus(1, "Errors Found", "sync")
-                            print(string.format("Invalid Control '%s' for Component '%s'", props.Control, component))
+                            print(string.format("Invalid Control '%s' for Component '%s'\n\nError: [%s]", props.Control, component, err))
                         end
                         
                         table.insert(Errors, {
@@ -583,8 +585,8 @@ if Controls then
         
         --print(rapidjson.encode(ComponentList, {pretty = true}))
         
-        Controls["errors.list"].Choices = Errors
-        Controls["errors.list"].String = ""
+        Controls["errors_list"].Choices = Errors
+        Controls["errors_list"].String = ""
     
     end
     
@@ -609,9 +611,9 @@ if Controls then
         end
         
         if (not options) then
-          Controls["controls.list"].Choices = ComponentList[i].Controls
+          Controls["controls_list"].Choices = ComponentList[i].Controls
           
-          Controls["controls.list"].String = ""
+          Controls["controls_list"].String = ""
         end
         
     end
@@ -680,7 +682,7 @@ if Controls then
         
         end
         
-        Controls["components.list"].Choices = ComponentList
+        Controls["components_list"].Choices = ComponentList
         ResetControlsList()
         
     end
@@ -688,7 +690,7 @@ if Controls then
     function SelectAllControlsOnly(bool)
         
         
-        local this_control = rapidjson.decode(Controls["components.list"].String)
+        local this_control = rapidjson.decode(Controls["components_list"].String)
         
         local parent_component = this_control.Text
         
@@ -703,21 +705,21 @@ if Controls then
                         
                 end
                 
-                Controls["controls.list"].Choices = ComponentList[i].Controls
+                Controls["controls_list"].Choices = ComponentList[i].Controls
                 
             end
         
         end
         
-        --Controls["controls.list"].String = ""
+        --Controls["controls_list"].String = ""
         
     end
     
-    Controls["config.filename"].EventHandler = SetFilename
-    Controls["config.save"].EventHandler = Save
-    Controls["config.sync"].EventHandler = Sync
+    Controls["config_filename"].EventHandler = SetFilename
+    Controls["config_save"].EventHandler = Save
+    Controls["config_sync"].EventHandler = Sync
     
-    Controls["components.list"].EventHandler = function(c)
+    Controls["components_list"].EventHandler = function(c)
     
         local component = rapidjson.decode(c.String).Text
         
@@ -731,18 +733,18 @@ if Controls then
         
         end
         
-        Controls["components.list"].Choices = ComponentList
+        Controls["components_list"].Choices = ComponentList
         
-        --Controls["components.list"].String = ""
+        --Controls["components_list"].String = ""
         
     end
     
-    Controls["components.selectall"].EventHandler = function() SelectAll(true) end
-    Controls['components.deselectall'].EventHandler = function() SelectAll(false) end
-    Controls['controls.selectall'].EventHandler = function() SelectAllControlsOnly(true) end
-    Controls['controls.deselectall'].EventHandler = function() SelectAllControlsOnly(false) end
+    Controls["components_selectall"].EventHandler = function() SelectAll(true) end
+    Controls['components_deselectall'].EventHandler = function() SelectAll(false) end
+    Controls['controls_selectall'].EventHandler = function() SelectAllControlsOnly(true) end
+    Controls['controls_deselectall'].EventHandler = function() SelectAllControlsOnly(false) end
     
-    Controls["controls.list"].EventHandler = function(c)
+    Controls["controls_list"].EventHandler = function(c)
         
         local this_control = rapidjson.decode(c.String)
         
@@ -761,17 +763,17 @@ if Controls then
                     end
                 end
                 
-                Controls["controls.list"].Choices = ComponentList[i].Controls
+                Controls["controls_list"].Choices = ComponentList[i].Controls
                 
             end
         
         end
         --print(rapidjson.encode(ComponentList, {pretty = true}))
-        --Controls["controls.list"].String = ""
+        --Controls["controls_list"].String = ""
         
     end
     
-    Controls['components.filter'].EventHandler = GetComponents
+    Controls['components_filter'].EventHandler = GetComponents
     
     GetComponents()
 

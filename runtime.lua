@@ -4,14 +4,14 @@ directory = "media/PageArchives/Configuration Files"
 
 function SetStatus(code, message, name)
 
-    Controls[string.format("status.%s", name)].Value = code
-    Controls[string.format("status.%s", name)].String = message
+    Controls[string.format("status_%s", name)].Value = code
+    Controls[string.format("status_%s", name)].String = message
 
 end; SetStatus(0, "", "sync"); SetStatus(0, "", "save")
 
 function GetFilename()
 
-    local name = Controls["config.filename"].String
+    local name = Controls["config_filename"].String
     if not name:match("%w+") then name = "default-config" end
     
     return string.format("%s/%s.json", directory, name)
@@ -25,7 +25,7 @@ function GetComponents()
     
     for i, component in ipairs(Components) do
        
-       if component.Name:find(Controls['components.filter'].String) then
+       if component.Name:find(Controls['components_filter'].String) then
         
         table.insert(ComponentList, {
             Text = component.Name,
@@ -37,7 +37,7 @@ function GetComponents()
         
     end
     
-    Controls["components.list"].Choices = ComponentList
+    Controls["components_list"].Choices = ComponentList
     
     Sync()
 end
@@ -54,8 +54,8 @@ function ComponentIsValid(component)
 end
 
 function ResetControlsList()
-    Controls["controls.list"].Choices = {}
-    Controls["controls.list"].String = ""
+    Controls["controls_list"].Choices = {}
+    Controls["controls_list"].String = ""
 end
 
 function Sync()
@@ -78,14 +78,14 @@ function Sync()
     UpdateList(data)
     
     -- update the list box
-    Controls["components.list"].Choices = ComponentList
+    Controls["components_list"].Choices = ComponentList
     
 end
 
 function UpdateList(data)
     
     -- reset the string, so there's no weird interactions with the list box
-    Controls["components.list"].String = ""
+    Controls["components_list"].String = ""
     
     -- reset the selections
     for i, choice in ipairs(ComponentList) do
@@ -96,7 +96,9 @@ function UpdateList(data)
     local Errors = {}
     
     local function PushValues(component, props)
-        Component.New(component)[props.Control].String = props.String
+        local component = Component.New(component)
+        print(props.Control)
+        component[props.Control].String = props.String
     end
     
     -- error check that the JSON data is valid
@@ -105,7 +107,7 @@ function UpdateList(data)
         SetStatus(2, "Invalid JSON Data", "sync")
         print("Invalid JSON")     
         table.insert(Errors, {Color = "Red", Text = "Invalid JSON - Check Formatting"})
-        Controls["errors.list"].Choices = Errors
+        Controls["errors_list"].Choices = Errors
         return
         
     end
@@ -132,7 +134,7 @@ function UpdateList(data)
                     else
                         msg = "does not exist"
                         SetStatus(1, "Errors Found", "sync")
-                        print(string.format("Invalid Control '%s' for Component '%s'", props.Control, component))
+                        print(string.format("Invalid Control '%s' for Component '%s'\n\nError: [%s]", props.Control, component, err))
                     end
                     
                     table.insert(Errors, {
@@ -176,8 +178,8 @@ function UpdateList(data)
     
     --print(rapidjson.encode(ComponentList, {pretty = true}))
     
-    Controls["errors.list"].Choices = Errors
-    Controls["errors.list"].String = ""
+    Controls["errors_list"].Choices = Errors
+    Controls["errors_list"].String = ""
 
 end
 
@@ -202,9 +204,9 @@ function GetControlsOnComponent(component, i, options)
     end
     
     if (not options) then
-      Controls["controls.list"].Choices = ComponentList[i].Controls
+      Controls["controls_list"].Choices = ComponentList[i].Controls
       
-      Controls["controls.list"].String = ""
+      Controls["controls_list"].String = ""
     end
     
 end
@@ -273,7 +275,7 @@ function SelectAll(bool)
     
     end
     
-    Controls["components.list"].Choices = ComponentList
+    Controls["components_list"].Choices = ComponentList
     ResetControlsList()
     
 end
@@ -281,7 +283,7 @@ end
 function SelectAllControlsOnly(bool)
     
     
-    local this_control = rapidjson.decode(Controls["components.list"].String)
+    local this_control = rapidjson.decode(Controls["components_list"].String)
     
     local parent_component = this_control.Text
     
@@ -296,21 +298,21 @@ function SelectAllControlsOnly(bool)
                     
             end
             
-            Controls["controls.list"].Choices = ComponentList[i].Controls
+            Controls["controls_list"].Choices = ComponentList[i].Controls
             
         end
     
     end
     
-    --Controls["controls.list"].String = ""
+    --Controls["controls_list"].String = ""
     
 end
 
-Controls["config.filename"].EventHandler = SetFilename
-Controls["config.save"].EventHandler = Save
-Controls["config.sync"].EventHandler = Sync
+Controls["config_filename"].EventHandler = SetFilename
+Controls["config_save"].EventHandler = Save
+Controls["config_sync"].EventHandler = Sync
 
-Controls["components.list"].EventHandler = function(c)
+Controls["components_list"].EventHandler = function(c)
 
     local component = rapidjson.decode(c.String).Text
     
@@ -324,18 +326,18 @@ Controls["components.list"].EventHandler = function(c)
     
     end
     
-    Controls["components.list"].Choices = ComponentList
+    Controls["components_list"].Choices = ComponentList
     
-    --Controls["components.list"].String = ""
+    --Controls["components_list"].String = ""
     
 end
 
-Controls["components.selectall"].EventHandler = function() SelectAll(true) end
-Controls['components.deselectall'].EventHandler = function() SelectAll(false) end
-Controls['controls.selectall'].EventHandler = function() SelectAllControlsOnly(true) end
-Controls['controls.deselectall'].EventHandler = function() SelectAllControlsOnly(false) end
+Controls["components_selectall"].EventHandler = function() SelectAll(true) end
+Controls['components_deselectall'].EventHandler = function() SelectAll(false) end
+Controls['controls_selectall'].EventHandler = function() SelectAllControlsOnly(true) end
+Controls['controls_deselectall'].EventHandler = function() SelectAllControlsOnly(false) end
 
-Controls["controls.list"].EventHandler = function(c)
+Controls["controls_list"].EventHandler = function(c)
     
     local this_control = rapidjson.decode(c.String)
     
@@ -354,16 +356,16 @@ Controls["controls.list"].EventHandler = function(c)
                 end
             end
             
-            Controls["controls.list"].Choices = ComponentList[i].Controls
+            Controls["controls_list"].Choices = ComponentList[i].Controls
             
         end
     
     end
     --print(rapidjson.encode(ComponentList, {pretty = true}))
-    --Controls["controls.list"].String = ""
+    --Controls["controls_list"].String = ""
     
 end
 
-Controls['components.filter'].EventHandler = GetComponents
+Controls['components_filter'].EventHandler = GetComponents
 
 GetComponents()

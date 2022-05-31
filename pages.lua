@@ -1,3 +1,3 @@
-for ix,name in ipairs(PageNames) do
-  table.insert(pages, {name = PageNames[ix]})
+for i, tbl in ipairs(Master_Object) do
+  table.insert(pages, {name = tbl.PageName})
 end

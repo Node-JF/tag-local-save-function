@@ -1,9 +1,7 @@
-table.insert(ctrls, {
-  Name = "SendButton",
-  ControlType = "Button",
-  ButtonType = "Momentary",
-  Count = 1,
-  UserPin = true,
-  PinStyle = "Input",
-  Icon = "Power"
-})
+for i, page in ipairs(Master_Object) do
+  for i, grouping in ipairs(page.Groupings) do
+      for i, control in ipairs(grouping.Controls) do
+          table.insert(ctls, control)
+      end
+  end
+end

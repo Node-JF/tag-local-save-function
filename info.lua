@@ -1,8 +1,8 @@
 PluginInfo = {
-  Name = "Base Plugin",
-  Version = "0.0",
-  BuildVersion = "20.0.0.0",
-  Id = "667567fa-1ad0-4c9c-ae16-db1b7152f525",
-  Author = "Your_Company",
-  Description = "A very basic plugin"  
+  Name = "TAG~Local Save Function",
+  Version = "1.0",
+  BuildVersion = "1.0.0.13",
+  Id = "463824d1-a6ad-49d8-97ca-63059d892c5d",
+  Author = "Jason Foord (TAG)",
+  Description = "Save and restore the .String property of controls on named components using a local JSON file in the PageArchives/Configuration Files directory"
 }

@@ -58,7 +58,9 @@ Save the selected controls to a json file with the configured filename.
 
 #### Filter
 
-Filter the components via a string.match method.
+Filter the components via a string.find method.
+
+> If you wish to filter specific components in a template file that contains other named components, try appending a unique suffix to each named component and then filtering for this suffix.
 
 #### Select All
 

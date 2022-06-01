@@ -1,32 +1,103 @@
-# BasePlugin
+# Local Save Function
 
-This is a template plugin that you can download with some pre-written Lua code to get you started.
+This is a Q-SYS Plugin for saving and recalling named component configurations in a JSON file on the Core's Media directory.
 
-## PluginCompile
+> Bug reports and feature requests should be sent to Jason Foord (jf@tag.com.au).
 
-This is a submodule built for VS Code. Please note it is not intended to be used for any other source code editors.
+## How do I get set up?
 
-The submodule will take the individual source Lua files in your local repo, compile them into a singular qplug file, and auto increment the desired octet of the BuildVersion.
-For first time builds, it will auto-generate an UUID for you plugin as well.
+See [Q-SYS Online Help File - Plugins](https://q-syshelp.qsc.com/#Schematic_Library/plugins.htm)
 
-Make sure to map a keyboard shortcut by navigating to File>Preferences>Keyboard Shortcuts. Type in "Tasks" and assign the desired shortcut to the Tasks: Run Build Task command
+## File Location
 
-### Build Arguments
+A new directory is created called 'Configuration Files' in the 'PageArchives' directory.
 
-<ver_maj> : increments the first octet of BuildVersion to denote a major version change
+Saved files are stored in this directory as '***filename***.json'.
 
-<ver_min> : increments the second octet of BuildVersion to denote a minor version change
+![File Location](./screenshots/file-location.png)
 
-<ver_fix> : increments the third octet of BuildVersion to denote a bugfix
+## JSON File Preview
 
-<ver_dev> : increments the fourth octet of BuildVersion to denote a new development version
+The JSON file stores controls in the following structure:
 
-< CANCEL > : cancels the build process
-  
-Please note that the public version (PluginVersion) only displays first and second octet. The second octets are intended for developer use and version tracking.
+> This example is for a named component 'Mixer' with controls 'input.1.gain' and 'input.1.invert' selected.
 
-## Support
+```javascript
+{
+    "Mixer": [
+        {
+            "Control": "input.1.gain",
+            "String": "0dB"
+        },
+        {
+            "Control": "input.1.invert",
+            "String": "normal"
+        },
+    ]
+}
+```
 
-If you have any questions or concerns with this template, please contact qsyscontrolfeedback@qsc.com
+![Dashboard](./screenshots/dashboard.png)
 
-Please note that QSC does not support plugins authored by third party developers or companies.
+## Sync/Save
+
+#### Filename
+
+The filename to save/recall the json file.
+
+#### Sync
+
+Sync the selected controls from a json file with the configured filename.
+
+#### Save
+
+Save the selected controls to a json file with the configured filename.
+
+## Components
+
+#### Filter
+
+Filter the components via a string.match method.
+
+#### Select All
+
+Select all components in the listbox.
+
+#### Deselect All
+
+Deselect all components in the listbox.
+
+#### Components
+
+Displays the filtered components. Components can be selected in a toggle fashion.
+
+> When a component is selected, it's controls will appear in the 'Controls' listbox for manual selection.
+
+> When a component is deselected, it's controls will be unselected.
+
+> When another component is selected, the previously selected component's control will still be included in the save until that component is deselected.
+
+## Controls
+
+#### Select All
+
+Select all controls in the listbox.
+
+#### Deselect All
+
+Deselect all controls in the listbox.
+
+#### Controls
+
+Displays the controls of the selected component. Controls can be selected in a toggle fashion.
+
+> Selected controls will be included in the file save.
+
+## Errors
+![Errors](./screenshots/errors.png)
+
+#### Errors
+
+Any errors that occurred during the last sync.
+
+> Errors occur when the componenet doesn't exist in the design, when the control doesn't exist on the component, or is the JSON file is invalid. Errors are non-blocking.

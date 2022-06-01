@@ -37,6 +37,7 @@ The JSON file stores controls in the following structure:
 }
 ```
 
+## Dashboard
 ![Dashboard](./screenshots/dashboard.png)
 
 ## Sync/Save

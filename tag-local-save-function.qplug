@@ -2,7 +2,7 @@
 PluginInfo = {
   Name = "TAG~Local Save Function",
   Version = "1.0",
-  BuildVersion = "1.0.0.17",
+  BuildVersion = "1.0.0.18",
   Id = "463824d1-a6ad-49d8-97ca-63059d892c5d",
   Author = "Jason Foord (TAG)",
   Description = "Save and restore the .String property of controls on named components using a local JSON file in the PageArchives/Configuration Files directory"
@@ -208,48 +208,10 @@ function GetPages(props)
     return pages
 end
 
--- Optional function to define model if plugin supports more than one model
-function GetModel(props)
-    local model = {}
-    return model
-end
-
 -- Define User configurable Properties of the plugin
 function GetProperties()
     local props = {}
     return props
-end
-
--- Optional function to define pins on the plugin that are not connected to a Control
-function GetPins(props)
-    local pins = {}
-    return pins
-end
-
--- Optional function to update available properties when properties are altered by the user
-function RectifyProperties(props)
-    return props
-end
-
--- Optional function to define components used within the plugin
-function GetComponents(props)
-    local components = {}
-    table.insert(components,{
-      Name = "main_mixer",
-      Type = "mixer",
-      Properties =   
-      {
-        ["n_inputs"] = 8,
-        ["n_outputs"] = 1,
-      }
-    })
-    return components
-end
-
--- Optional function to define wiring of components used within the plugin
-function GetWiring(props)
-    local wiring = {}
-    return wiring
 end
 
 -- Defines the Controls used within the plugin

@@ -258,7 +258,10 @@ function AddSelectedControls(i, choice, tbl)
     
     for _, control in ipairs(ctrls) do
         if (control.Selected) then
-            table.insert(tbl[choice.Text], {Control = control.Text, String = control.String})
+
+            -- get the current string of the control at save time
+            local controlString = Component.New(choice.Text)[control.Text].String
+            table.insert(tbl[choice.Text], {Control = control.Text, String = controlString})
         end
     end
     

@@ -1,8 +1,8 @@
 -- Information block for the plugin
 PluginInfo = {
   Name = "TAG~Local Save Function",
-  Version = "1.1",
-  BuildVersion = "1.1.0.1",
+  Version = "1.1.1",
+  BuildVersion = "1.1.1.0",
   Id = "463824d1-a6ad-49d8-97ca-63059d892c5d",
   Author = "Jason Foord (TAG)",
   Description = "Save and restore the .String property of controls on named components using a local JSON file in the PageArchives/Configuration Files directory"
@@ -628,8 +628,20 @@ if Controls then
         for _, control in ipairs(ctrls) do
             if (control.Selected) then
     
+                local function findCtl(ctls, f)
+                    for i, ctl in ipairs(ctls) do
+                        if (f(ctl)) then return ctl end
+                    end
+                end
+    
                 -- get the current string of the control at save time
-                local controlString = Component.New(choice.Text)[control.Text].String
+                local ctls = Component.GetControls(Component.New(choice.Text))
+    
+                local ctl = findCtl(ctls, function(c)
+                    return (c.Name == control.Text)
+                end)
+    
+                local controlString = ctl.String
                 table.insert(tbl[choice.Text], {Control = control.Text, String = controlString})
             end
         end

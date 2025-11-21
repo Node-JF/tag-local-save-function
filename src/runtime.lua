@@ -259,8 +259,20 @@ function AddSelectedControls(i, choice, tbl)
     for _, control in ipairs(ctrls) do
         if (control.Selected) then
 
+            local function findCtl(ctls, f)
+                for i, ctl in ipairs(ctls) do
+                    if (f(ctl)) then return ctl end
+                end
+            end
+
             -- get the current string of the control at save time
-            local controlString = Component.New(choice.Text)[control.Text].String
+            local ctls = Component.GetControls(Component.New(choice.Text))
+
+            local ctl = findCtl(ctls, function(c)
+                return (c.Name == control.Text)
+            end)
+
+            local controlString = ctl.String
             table.insert(tbl[choice.Text], {Control = control.Text, String = controlString})
         end
     end

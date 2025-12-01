@@ -49,7 +49,9 @@ function GetComponents()
 
     Controls["components_list"].Choices = ComponentList
 
-    Sync()
+    if (Properties['Sync on Start'].Value == 'Yes') then
+        Sync()
+    end
 end
 
 function ComponentIsValid(component)

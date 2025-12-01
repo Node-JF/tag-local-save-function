@@ -22,7 +22,7 @@ end
 
 -- Define User configurable Properties of the plugin
 function GetProperties()
-    local props = {}
+    --[[ #include "src/properties.lua" ]]
     return props
 end
 
